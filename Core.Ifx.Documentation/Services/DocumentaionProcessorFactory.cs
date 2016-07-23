@@ -24,7 +24,7 @@ namespace Core.Ifx.Documentation.Services
             switch (documentationOptions.DocumentationType)
             {
                 case DocumentationType.Contract:
-                    return new ContractDocumentationProcessor(assemblyDocumentation, typesInNamespaces, documentationOptions.OutputDirectory, new ContractTypeParser());
+                    return new ContractDocumentationProcessor(assemblyDocumentation, typesInNamespaces, documentationOptions.OutputDirectory, new ContractTypeParser(), new ContractDocumentationWriter());
                 case DocumentationType.Service:
                     return new ServiceDocumentationProcessor(assemblyDocumentation, typesInNamespaces);
                 default:
