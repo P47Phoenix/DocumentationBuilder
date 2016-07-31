@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Core.Ifx.Documentation.Services;
 
 namespace Core.Ifx.Documentation.Models
 {
@@ -12,6 +13,13 @@ namespace Core.Ifx.Documentation.Models
     /// <seealso cref="Core.Ifx.Documentation.Models.IDescription" />
     public class ServiceDescription : IDescription
     {
+        public ServiceDescription()
+        {
+            ServiceMethods = new List<ServiceMethod>();
+        }
+
+        public List<ServiceMethod> ServiceMethods { get; set; }
+
         /// <summary>
         /// Gets or sets the desription.
         /// </summary>
@@ -27,5 +35,8 @@ namespace Core.Ifx.Documentation.Models
         /// The name of hte service.
         /// </value>
         public string Name { get; set; }
+
+        public string Sample { get; set; }
+        public string Diagrams { get; set; }
     }
 }

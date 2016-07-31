@@ -29,7 +29,7 @@ namespace Core.Agent.DocumentationBuilder
 
         private void Run(DocumentParserOptions options)
         {
-            var builder = new Ifx.Documentation.DocumentionBuilder(new DocumentaionProcessorFactory());
+            var builder = new DocumentionBuilder(new DocumentaionProcessorFactory());
 
             builder.CreateDocumentation(options);
         }

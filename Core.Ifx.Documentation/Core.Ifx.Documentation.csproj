@@ -53,6 +53,7 @@
     <Compile Include="Services\ContractTypeParse.cs" />
     <Compile Include="Services\DocumentaionProcessorFactory.cs" />
     <Compile Include="Models\IDocumentationOptions.cs" />
+    <Compile Include="DocumentHelper.cs" />
     <Compile Include="Services\DocumentionBuilder.cs" />
     <Compile Include="Models\ContractDescription.cs" />
     <Compile Include="Models\ContractProperty.cs" />
@@ -63,10 +64,22 @@
     <Compile Include="Services\IDocumentationProcessor.cs" />
     <Compile Include="Services\IDocumentationWriter.cs" />
     <Compile Include="Services\ITypeParser.cs" />
+    <Compile Include="Resources.cs" />
     <Compile Include="Services\ServiceDocumentationProcessor.cs" />
+    <Compile Include="Services\ServiceDocumentationWriter.cs" />
+    <Compile Include="Models\ServiceMethod.cs" />
+    <Compile Include="Services\ServiceTypeParser.cs" />
+    <Compile Include="Services\ITestService.cs" />
+    <Compile Include="TemplateType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="template.docx" />
+    <EmbeddedResource Include="ContractTemplate.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ServiceTemplate.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MethodTemplate.docx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
