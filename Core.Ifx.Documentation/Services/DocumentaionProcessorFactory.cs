@@ -19,14 +19,16 @@ namespace Core.Ifx.Documentation.Services
 
             var typesInAssembly = assembly.GetTypes();
 
-            var typesInNamespaces = typesInAssembly.Where(type => type.Namespace.ToLower().StartsWith(documentationOptions.Namespace.ToLower())).ToList();
+            var typesInNamespaces = typesInAssembly
+                .Where(type => type.Namespace.ToLower().StartsWith(documentationOptions.Namespace.ToLower()))
+                .ToList();
 
             switch (documentationOptions.DocumentationType)
             {
                 case DocumentationType.Contract:
                     return new ContractDocumentationProcessor(assemblyDocumentation, typesInNamespaces, documentationOptions.OutputDirectory, new ContractTypeParser(), new ContractDocumentationWriter());
                 case DocumentationType.Service:
-                    return new ServiceDocumentationProcessor(assemblyDocumentation, typesInNamespaces);
+                    return new ServiceDocumentationProcessor(assemblyDocumentation, typesInNamespaces, documentationOptions.OutputDirectory, new ServiceTypeParser(), new ServiceDocumentationWriter());
                 default:
                     return null;
             }
