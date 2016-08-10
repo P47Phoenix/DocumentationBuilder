@@ -21,5 +21,22 @@ namespace Core.Ifx.Documentation.Services
         /// <returns></returns>
         [OperationContract]
         bool TryParse(string s, out int value);
+
+		/// <summary>
+		/// Add operation
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="addValue"></param>
+		/// <returns></returns>
+		[OperationContract]
+	    int Add(int value, int addValue);
+
+		/// <summary>
+		/// Iterate across threads
+		/// </summary>
+		/// <param name="number"></param>
+		/// <param name="threads"></param>
+		[OperationContract]
+		void Iterate(List<int> number, int threads = 1);
     }
 }

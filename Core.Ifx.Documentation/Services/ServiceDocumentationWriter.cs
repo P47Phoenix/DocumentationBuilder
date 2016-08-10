@@ -28,7 +28,7 @@ namespace Core.Ifx.Documentation.Services
                 Body body = document.Body;
 
                 DocumentHelper.SetTemplateTextName(body, "[ServiceContract]", description.Name);
-                DocumentHelper.SetTemplateTextName(body, "[ServiceContractDescription]", description.Name);
+                DocumentHelper.SetTemplateTextName(body, "[ServiceContractDescription]", description.Desription);
 
                 OpenXmlElement methodTemplate = DocumentHelper.GetMethodTemplate();
 
