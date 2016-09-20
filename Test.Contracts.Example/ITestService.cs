@@ -20,6 +20,30 @@ namespace Core.Ifx.Documentation.Services
         /// <param name="value"></param>
         /// <returns></returns>
         [OperationContract]
-        bool TryParse(string s, out int value);
+        IReturnExample ExampleRun(ExampleArgs exampleArgs);
+    }
+
+    public interface IReturnExample
+    {
+        bool Success { get; set; }
+    }
+
+    public class ConcreteReturn : IReturnExample
+    {
+        public bool Success { get; set; }
+    }
+
+    public class ExampleArgs
+    {
+        public List<IExmapleArg> ExmapleArgs { get; set; }
+    }
+
+    public class ExampleArgString : IExmapleArg
+    {
+        public string StringArg { get; set; }
+    }
+
+    public interface IExmapleArg
+    {
     }
 }

@@ -20,10 +20,14 @@ namespace Core.Ifx.Documentation.Services
             foreach (var typesInNamespace in m_typesInNamespaces)
             {
                 if (!typesInNamespace.IsInterface)
+                {
                     continue;
+                }
 
                 if (!typesInNamespace.GetCustomAttributes().OfType<ServiceContractAttribute>().Any())
+                {
                     continue;
+                }
 
                 var xPathQueryForType = Helper.GetXPathQueryForType(typesInNamespace.FullName);
 
@@ -37,14 +41,27 @@ namespace Core.Ifx.Documentation.Services
 
                 serviceDescriptions.Add(serviceDescription);
 
+                serviceDescription.TypesServiceDependsOn = new List<Type>();
+
                 foreach (var method in typesInNamespace.GetMethods())
                 {
                     if (method.IsStatic || !method.IsPublic)
+                    {
                         continue;
+                    }
 
                     var xPathQueryForMethod = Helper.GetXPathQueryForMethod(typesInNamespace.FullName, method.Name);
 
                     var documentationForMethod = m_assemblyDocumentation.XPathSelectElement(xPathQueryForMethod);
+
+                    serviceDescription.TypesServiceDependsOn.Add(method.ReturnType);
+
+                    var parameters = method.GetParameters();
+
+                    foreach (var parameter in parameters)
+                    {
+                        serviceDescription.TypesServiceDependsOn.Add(parameter.ParameterType);
+                    }
 
                     serviceDescription.ServiceMethods.Add(new ServiceMethod
                     {
@@ -53,6 +70,8 @@ namespace Core.Ifx.Documentation.Services
                         Signature = GetMethodSignature(method)
                     });
                 }
+
+
             }
             return serviceDescriptions;
         }

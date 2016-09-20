@@ -14,12 +14,6 @@ namespace Core.Agent.DocumentationBuilder
         [Option('a', HelpText = "The path to the assembly we want documentation on")]
         public string AssemblyPath { get; set; }
 
-        [Option('t', DefaultValue = DocumentationType.Contract, HelpText = "What type of documentation are you trying to create")]
-        public DocumentationType DocumentationType { get; set; }
-
-        [Option('n', "The namespaces to look at in the given assembly")]
-        public string Namespace { get; set; }
-
         [Option('o', HelpText = "The output directory for the documantation")]
         public string OutputDirectory { get; set; }
 

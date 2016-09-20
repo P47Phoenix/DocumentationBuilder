@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
 using System.Reflection;
 using Core.Ifx.Documentation.Models;
@@ -76,9 +75,9 @@ namespace Core.Ifx.Documentation.Services
                 StyleId = "Heading1",
                 CustomStyle = true
             };
-            StyleName styleName1 = new StyleName() { Val = "Heading1" };
+            var styleName1 = new StyleName() { Val = "Heading1" };
             style.Append(styleName1);
-            StyleRunProperties styleRunProperties1 = new StyleRunProperties();
+            var styleRunProperties1 = new StyleRunProperties();
             styleRunProperties1.Append(new RunFonts() { Ascii = "Calibri Light (Headings)" });
             styleRunProperties1.Append(new FontSize() { Val = "32" }); // Sizes are in half-points. Oy!
             style.Append(styleRunProperties1);
@@ -145,7 +144,7 @@ namespace Core.Ifx.Documentation.Services
             var tempFile = Path.GetTempFileName();
 
             DocumentHelper.CreateTemplateFile(TemplateType.MethodTemplate, tempFile);
-            
+
             using (WordprocessingDocument myDoc = WordprocessingDocument.Open(tempFile, isEditable: true))
             {
                 var document = myDoc.MainDocumentPart.Document;

@@ -22,20 +22,6 @@ namespace Core.Ifx.Documentation.Models
         /// </value>
         string AssemblyPath { get; set; }
         /// <summary>
-        /// Gets or sets the type of the documentation.
-        /// </summary>
-        /// <value>
-        /// The type of the documentation.
-        /// </value>
-        DocumentationType DocumentationType { get; set; }
-        /// <summary>
-        /// Gets or sets the namespace.
-        /// </summary>
-        /// <value>
-        /// The namespace.
-        /// </value>
-        string Namespace { get; set; }
-        /// <summary>
         /// Gets or sets the output directory.
         /// </summary>
         /// <value>
