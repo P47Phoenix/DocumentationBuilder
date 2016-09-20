@@ -20,7 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Core.Ifx.Documentation.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -67,6 +68,7 @@
     <Compile Include="Services\ServiceDocumentationWriter.cs" />
     <Compile Include="Models\ServiceMethod.cs" />
     <Compile Include="Services\ServiceTypeParser.cs" />
+    <Compile Include="TemplateMissingException.cs" />
     <Compile Include="TemplateType.cs" />
   </ItemGroup>
   <ItemGroup>

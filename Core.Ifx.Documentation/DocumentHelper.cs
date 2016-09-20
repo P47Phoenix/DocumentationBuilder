@@ -17,6 +17,10 @@ namespace Core.Ifx.Documentation.Services
         {
             var contractNameText = GetTextElementWithTextOf(body, templateText);
 
+            if (contractNameText == null)
+            {
+                throw new TemplateMissingException($"The template field {templateText}");
+            }
             contractNameText.Text = templateValue;
         }
 

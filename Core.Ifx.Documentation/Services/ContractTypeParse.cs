@@ -44,7 +44,7 @@ namespace Core.Ifx.Documentation.Services
                     {
                         DataType = property.PropertyType,
                         Name = property.Name,
-                        Desription = documenationForProperty.Value
+                        Desription = documenationForProperty?.Value ?? string.Empty
                     };
 
                     contractDesciption.ContractProperties.Add(contractProperty);
