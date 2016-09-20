@@ -13,11 +13,10 @@ namespace Core.Ifx.Documentation.Services
     public interface ITestService
     {
         /// <summary>
-        /// Try parse int
+        /// Example service method
         /// </summary>
-        /// <param name="s"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="exampleArgs">Some args</param>
+        /// <returns>return example</returns>
         [OperationContract]
         IReturnExample ExampleRun(ExampleArgs exampleArgs);
     }

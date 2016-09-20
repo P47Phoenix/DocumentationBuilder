@@ -13,11 +13,11 @@ namespace Core.Ifx.Documentation.Services
 {
     public class ServiceTypeParser : ITypeParser<ServiceDescription>
     {
-        public List<ServiceDescription> Parse(XDocument m_assemblyDocumentation, List<Type> m_typesInNamespaces)
+        public List<ServiceDescription> Parse(XDocument m_assemblyDocumentation, List<Type> typesInAssembly)
         {
             List<ServiceDescription> serviceDescriptions = new List<ServiceDescription>();
 
-            foreach (var typesInNamespace in m_typesInNamespaces)
+            foreach (var typesInNamespace in typesInAssembly)
             {
                 if (!typesInNamespace.IsInterface)
                 {
@@ -69,11 +69,100 @@ namespace Core.Ifx.Documentation.Services
                         Description = documentationForMethod.Value.Trim(' ', '\n'),
                         Signature = GetMethodSignature(method)
                     });
+
+                    this.FindDependencies(serviceDescription, typesInAssembly);
                 }
 
 
             }
             return serviceDescriptions;
+        }
+
+        private void FindDependencies(ServiceDescription serviceDescription, List<Type> typesInAssembly)
+        {
+            var newTypes = FindDependenciesRecursively(serviceDescription.TypesServiceDependsOn, typesInAssembly).Concat(serviceDescription.TypesServiceDependsOn);
+
+            serviceDescription.TypesServiceDependsOn = newTypes.Distinct().ToList();
+        }
+
+        private IEnumerable<Type> FindDependenciesRecursively(List<Type> serviceDescriptionTypesServiceDependsOn, List<Type> typesInAssembly)
+        {
+            foreach (var type in typesInAssembly)
+            {
+                foreach (var serviceDependantType in serviceDescriptionTypesServiceDependsOn)
+                {
+                    if (ShouldIncludeType(type, serviceDependantType))
+                    {
+                        yield return type;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="serviceDependantType"></param>
+        /// <returns>
+        /// 
+        /// </returns>
+        private bool ShouldIncludeType(Type type, Type serviceDependantType, int currentRecursion = 0)
+        {
+            if (currentRecursion++ > 100)
+            {
+                throw new Exception("Max recursion exceed the max of a hundred. Contact you architect for help.");
+            }
+            if (type.BaseType == serviceDependantType)
+            {
+                return true;
+            }
+
+            if (type.GetInterfaces().Contains(serviceDependantType))
+            {
+                return true;
+            }
+
+            var propTypes = serviceDependantType.GetProperties().Select(info => info.PropertyType).ToList();
+
+            foreach (var propType in propTypes)
+            {
+                if (propType.IsValueType)
+                {
+                    continue;
+                }
+
+                if (propType == type)
+                {
+                    return true;
+                }
+
+                if (ShouldIncludeType(type, propType, currentRecursion))
+                {
+                    return true;
+                }
+            }
+
+            if (serviceDependantType.IsGenericType)
+            {
+                var genericArgs = serviceDependantType.GetGenericArguments();
+
+                foreach (var genericArg in genericArgs)
+                {
+                    if (ShouldIncludeType(type, genericArg, currentRecursion))
+                    {
+                        return true;
+                    }
+                }
+
+            }
+
+            if (type.BaseType == null || type.BaseType == typeof(object))
+            {
+                return false;
+            }
+
+            return ShouldIncludeType(type.BaseType, serviceDependantType, currentRecursion);
         }
 
         private string GetMethodSignature(MethodInfo method)

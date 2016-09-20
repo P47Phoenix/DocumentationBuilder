@@ -45,7 +45,7 @@
     <Compile Include="ConcreteReturn.cs" />
     <Compile Include="ExampleArgs.cs" />
     <Compile Include="ExampleArgString.cs" />
-    <Compile Include="IExmapleArg.cs" />
+    <Compile Include="IExampleArg.cs" />
     <Compile Include="IReturnExample.cs" />
     <Compile Include="ITestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

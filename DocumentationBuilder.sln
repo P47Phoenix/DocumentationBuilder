@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Ifx.Documentation", "Core.Ifx.Documentation\Core.Ifx.Documentation.csproj", "{E579943C-F3F8-4442-9AB3-73D4AC5928B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3D18D4AF-FD73-4413-9EF2-78A230116BCF} = {3D18D4AF-FD73-4413-9EF2-78A230116BCF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Agent.DocumentationBuilder", "Core.Agent.DocumentationBuilder\Core.Agent.DocumentationBuilder.csproj", "{89CA7776-7442-43D2-A5E0-023537C14C1E}"
 EndProject
