@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Core.Agent.DocumentationBuilder
 {
@@ -24,6 +25,8 @@ namespace Core.Agent.DocumentationBuilder
             DocumentParserOptions options = new DocumentParserOptions();
 
             CommandLine.Parser.Default.ParseArguments(args, options);
+
+            Console.WriteLine($"Args: {JsonConvert.SerializeObject(options)}");
 
             return options;
         }
