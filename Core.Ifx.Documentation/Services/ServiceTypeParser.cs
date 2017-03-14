@@ -165,13 +165,49 @@ namespace Core.Ifx.Documentation.Services
             return ShouldIncludeType(type.BaseType, serviceDependantType, currentRecursion);
         }
 
-        private string GetMethodSignature(MethodInfo method)
-        {
-            var returnParamName = method.ReturnType.Name;
+		private string GetMethodSignature(MethodInfo method)
+		{
+			var returnParamName = method.ReturnType.Name;
 
-            var paramaters = string.Join(", ", method.GetParameters().Select(param => param.ParameterType.Name + " " + param.Name));
+			var paramaters = string.Join(", ", method.GetParameters().Select(GetParamNameValue));
 
-            return string.Format("{0} {1}({2})", returnParamName, method.Name, paramaters);
-        }
+			return string.Format("{0} {1}({2})", returnParamName, method.Name, paramaters);
+		}
+
+		private static string GetParamNameValue(ParameterInfo param)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if (param.IsOut)
+			{
+				sb.Append("out ");
+			}
+
+			if (param.ParameterType.IsGenericType)
+			{
+				var genericArguments = param.ParameterType.GetGenericArguments();
+
+				var genericArgumentsJoin = string.Join(", ", genericArguments.Select(genericType => genericType.Name));
+				
+				var typeName = param.ParameterType.Name.Replace($"`{genericArguments.Length}", "");
+
+				sb.Append($"{typeName}<{genericArgumentsJoin}>");
+			}
+			else
+			{
+				sb.Append(param.ParameterType.Name.Replace("&", ""));
+			}
+
+			sb.Append(" ");
+
+			sb.Append(param.Name);
+
+			if (param.HasDefaultValue)
+			{
+				sb.Append($" = {param.DefaultValue}");
+			}
+
+			return sb.ToString();
+		}
     }
 }
