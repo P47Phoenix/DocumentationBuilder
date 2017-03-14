@@ -69,7 +69,6 @@
     <Compile Include="Services\ServiceDocumentationWriter.cs" />
     <Compile Include="Models\ServiceMethod.cs" />
     <Compile Include="Services\ServiceTypeParser.cs" />
-    <Compile Include="Services\ITestService.cs" />
     <Compile Include="TemplateType.cs" />
   </ItemGroup>
   <ItemGroup>

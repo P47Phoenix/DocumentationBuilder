@@ -59,6 +59,10 @@ namespace Core.Ifx.Documentation.Services
 
             using (var resourceStream = assembly.GetManifestResourceStream(resoucePath))
             {
+                var directory = Path.GetDirectoryName(documentFileName);
+
+                Directory.CreateDirectory(directory);
+
                 using (
                     FileStream fileStream = new FileStream(documentFileName, FileMode.Create, FileAccess.Write,
                         FileShare.Read, 4096))
