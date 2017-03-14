@@ -68,10 +68,7 @@
     <Compile Include="Services\ServiceDocumentationWriter.cs" />
     <Compile Include="Models\ServiceMethod.cs" />
     <Compile Include="Services\ServiceTypeParser.cs" />
-<<<<<<< HEAD
-=======
     <Compile Include="TemplateMissingException.cs" />
->>>>>>> refs/remotes/origin/master
     <Compile Include="TemplateType.cs" />
   </ItemGroup>
   <ItemGroup>
