@@ -31,7 +31,7 @@ namespace Core.Ifx.Documentation.Services
                 
                 DocumentHelper.SetTemplateTextName(body, "[ContractName]", description.Name);
 
-                DocumentHelper.SetTemplateTextName(body, "ContractDescription", description.Desription);
+                DocumentHelper.SetTemplateTextName(body, "[ContractDescription]", description.Desription);
 
                 var table = body.OfType<Table>().FirstOrDefault();
 

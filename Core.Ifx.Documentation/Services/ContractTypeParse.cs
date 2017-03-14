@@ -11,22 +11,19 @@ namespace Core.Ifx.Documentation.Services
 {
     public class ContractTypeParser : ITypeParser<ContractDescription>
     {
-        public List<ContractDescription> Parse(XDocument m_assemblyDocumentation, List<Type> m_typesInNamespaces)
+        public List<ContractDescription> Parse(XDocument m_assemblyDocumentation, List<Type> typesInAssembly)
         {
             var contractDescriptions = new List<ContractDescription>();
 
-            foreach (var typeInNamespace in m_typesInNamespaces)
+            foreach (var typeInNamespace in typesInAssembly)
             {
                 string xPathQueryforContract = Helper.GetXPathQueryForType(typeInNamespace.FullName);
 
-                var documenationForContract = m_assemblyDocumentation.XPathSelectElement(xPathQueryforContract);
+                var documentationForContract = m_assemblyDocumentation.XPathSelectElement(xPathQueryforContract);
 
-                string description = "";
+                string description = documentationForContract?.Value ?? string.Empty;
 
-                if (documenationForContract != null)
-                    description = documenationForContract.Value;
-
-                var contractDesciption = new ContractDescription
+                var contractDescription = new ContractDescription
                 {
                     Name = typeInNamespace.Name,
                     Desription = description
@@ -38,19 +35,19 @@ namespace Core.Ifx.Documentation.Services
                 {
                     var xpathQueryForProperty = Helper.GetXPathQueryForProperty(property.DeclaringType.FullName, property.Name);
 
-                    var documenationForProperty = m_assemblyDocumentation.XPathSelectElement(xpathQueryForProperty);
+                    var documentationForProperty = m_assemblyDocumentation.XPathSelectElement(xpathQueryForProperty);
 
                     var contractProperty = new ContractProperty
                     {
                         DataType = property.PropertyType,
                         Name = property.Name,
-                        Desription = documenationForProperty.Value
+                        Desription = documentationForProperty?.Value ?? string.Empty
                     };
 
-                    contractDesciption.ContractProperties.Add(contractProperty);
+                    contractDescription.ContractProperties.Add(contractProperty);
                 }
 
-                contractDescriptions.Add(contractDesciption);
+                contractDescriptions.Add(contractDescription);
             }
 
             return contractDescriptions;

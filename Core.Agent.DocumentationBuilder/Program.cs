@@ -1,6 +1,7 @@
 ﻿using Core.Ifx.Documentation.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,9 +33,11 @@ namespace Core.Agent.DocumentationBuilder
 
         private void Run(DocumentParserOptions options)
         {
-            var builder = new DocumentionBuilder(new DocumentaionProcessorFactory());
+            var builder = new DocumentionBuilder();
 
             builder.CreateDocumentation(options);
+
+            Process.Start(options.OutputDirectory);
         }
     }
 }

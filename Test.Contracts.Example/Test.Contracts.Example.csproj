@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E579943C-F3F8-4442-9AB3-73D4AC5928B0}</ProjectGuid>
+    <ProjectGuid>{3D18D4AF-FD73-4413-9EF2-78A230116BCF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Core.Ifx.Documentation</RootNamespace>
-    <AssemblyName>Core.Ifx.Documentation</AssemblyName>
+    <RootNamespace>Test.Contracts.Example</RootNamespace>
+    <AssemblyName>Test.Contracts.Example</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,8 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Debug\Test.Contracts.Example.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,13 +29,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Core.Ifx.Documentation.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,44 +40,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper.cs" />
-    <Compile Include="Models\DocumentationType.cs" />
-    <Compile Include="Services\ContractDocumentationProcessor.cs" />
-    <Compile Include="Services\ContractDocumentationWriter.cs" />
-    <Compile Include="Services\ContractTypeParse.cs" />
-    <Compile Include="Models\IDocumentationOptions.cs" />
-    <Compile Include="DocumentHelper.cs" />
-    <Compile Include="Services\DocumentionBuilder.cs" />
-    <Compile Include="Models\ContractDescription.cs" />
-    <Compile Include="Models\ContractProperty.cs" />
-    <Compile Include="Models\IDescription.cs" />
-    <Compile Include="Models\ServiceDescription.cs" />
+    <Compile Include="ConcreteReturn.cs" />
+    <Compile Include="ExampleArgs.cs" />
+    <Compile Include="ExampleArgString.cs" />
+    <Compile Include="IExampleArg.cs" />
+    <Compile Include="IReturnExample.cs" />
+    <Compile Include="ITestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\IDocumentationProcessor.cs" />
-    <Compile Include="Services\IDocumentationWriter.cs" />
-    <Compile Include="Services\ITypeParser.cs" />
-    <Compile Include="Resources.cs" />
-    <Compile Include="Services\ServiceDocumentationProcessor.cs" />
-    <Compile Include="Services\ServiceDocumentationWriter.cs" />
-    <Compile Include="Models\ServiceMethod.cs" />
-    <Compile Include="Services\ServiceTypeParser.cs" />
-<<<<<<< HEAD
-=======
-    <Compile Include="TemplateMissingException.cs" />
->>>>>>> refs/remotes/origin/master
-    <Compile Include="TemplateType.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ContractTemplate.docx" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ServiceTemplate.docx" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MethodTemplate.docx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

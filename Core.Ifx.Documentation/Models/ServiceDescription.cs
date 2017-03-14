@@ -38,5 +38,6 @@ namespace Core.Ifx.Documentation.Models
 
         public string Sample { get; set; }
         public string Diagrams { get; set; }
+        public List<Type> TypesServiceDependsOn { get; set; }
     }
 }
