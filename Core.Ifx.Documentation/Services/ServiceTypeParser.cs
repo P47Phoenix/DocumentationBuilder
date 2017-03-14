@@ -13,46 +13,41 @@ namespace Core.Ifx.Documentation.Services
 {
     public class ServiceTypeParser : ITypeParser<ServiceDescription>
     {
-        public List<ServiceDescription> Parse(XDocument m_assemblyDocumentation, List<Type> typesInAssembly)
+        public List<ServiceDescription> Parse(List<Type> typesInAssembly, XDocument m_assemblyDocumentation = null)
         {
-            List<ServiceDescription> serviceDescriptions = new List<ServiceDescription>();
+            var serviceDescriptions = new List<ServiceDescription>();
 
-            foreach (var typesInNamespace in typesInAssembly)
+            foreach (var type in typesInAssembly)
             {
-                if (!typesInNamespace.IsInterface)
+                if (ShouldDocumentType(type))
                 {
                     continue;
                 }
 
-                if (!typesInNamespace.GetCustomAttributes().OfType<ServiceContractAttribute>().Any())
-                {
-                    continue;
-                }
+                var xPathQueryForType = Helper.GetXPathQueryForType(type.FullName);
 
-                var xPathQueryForType = Helper.GetXPathQueryForType(typesInNamespace.FullName);
-
-                var documenationForService = m_assemblyDocumentation.XPathSelectElement(xPathQueryForType);
+                var documentationForService = m_assemblyDocumentation?.XPathSelectElement(xPathQueryForType);
 
                 var serviceDescription = new ServiceDescription
                 {
-                    Name = typesInNamespace.Name,
-                    Desription = documenationForService.Value
+                    Name = type.Name,
+                    Desription = documentationForService?.Value
                 };
 
                 serviceDescriptions.Add(serviceDescription);
 
                 serviceDescription.TypesServiceDependsOn = new List<Type>();
 
-                foreach (var method in typesInNamespace.GetMethods())
+                foreach (var method in type.GetMethods())
                 {
                     if (method.IsStatic || !method.IsPublic)
                     {
                         continue;
                     }
 
-                    var xPathQueryForMethod = Helper.GetXPathQueryForMethod(typesInNamespace.FullName, method.Name);
+                    var xPathQueryForMethod = Helper.GetXPathQueryForMethod(type.FullName, method.Name);
 
-                    var documentationForMethod = m_assemblyDocumentation.XPathSelectElement(xPathQueryForMethod);
+                    var documentationForMethod = m_assemblyDocumentation?.XPathSelectElement(xPathQueryForMethod);
 
                     serviceDescription.TypesServiceDependsOn.Add(method.ReturnType);
 
@@ -66,7 +61,7 @@ namespace Core.Ifx.Documentation.Services
                     serviceDescription.ServiceMethods.Add(new ServiceMethod
                     {
                         Name = method.Name,
-                        Description = documentationForMethod.Value.Trim(' ', '\n'),
+                        Description = documentationForMethod?.Value.Trim(' ', '\n'),
                         Signature = GetMethodSignature(method)
                     });
 
@@ -76,6 +71,31 @@ namespace Core.Ifx.Documentation.Services
 
             }
             return serviceDescriptions;
+        }
+
+        private bool ShouldDocumentType(Type type)
+        {
+            if (type.BaseType == null)
+            {
+                return type.GetCustomAttribute<ServiceContractAttribute>() != null;
+            }
+
+            if (type.BaseType.Name.Equals("ApiController", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            if (type.BaseType.Name.Equals("Controller", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            if (ShouldDocumentType(type.BaseType))
+            {
+                return true;
+            }
+            // if we have a ServiceContractAttribute return true else false
+            return type.GetCustomAttribute<ServiceContractAttribute>() != null;
         }
 
         private void FindDependencies(ServiceDescription serviceDescription, List<Type> typesInAssembly)
@@ -165,49 +185,49 @@ namespace Core.Ifx.Documentation.Services
             return ShouldIncludeType(type.BaseType, serviceDependantType, currentRecursion);
         }
 
-		private string GetMethodSignature(MethodInfo method)
-		{
-			var returnParamName = method.ReturnType.Name;
+        private string GetMethodSignature(MethodInfo method)
+        {
+            var returnParamName = method.ReturnType.Name;
 
-			var paramaters = string.Join(", ", method.GetParameters().Select(GetParamNameValue));
+            var paramaters = string.Join(", ", method.GetParameters().Select(GetParamNameValue));
 
-			return string.Format("{0} {1}({2})", returnParamName, method.Name, paramaters);
-		}
+            return string.Format("{0} {1}({2})", returnParamName, method.Name, paramaters);
+        }
 
-		private static string GetParamNameValue(ParameterInfo param)
-		{
-			StringBuilder sb = new StringBuilder();
+        private static string GetParamNameValue(ParameterInfo param)
+        {
+            StringBuilder sb = new StringBuilder();
 
-			if (param.IsOut)
-			{
-				sb.Append("out ");
-			}
+            if (param.IsOut)
+            {
+                sb.Append("out ");
+            }
 
-			if (param.ParameterType.IsGenericType)
-			{
-				var genericArguments = param.ParameterType.GetGenericArguments();
+            if (param.ParameterType.IsGenericType)
+            {
+                var genericArguments = param.ParameterType.GetGenericArguments();
 
-				var genericArgumentsJoin = string.Join(", ", genericArguments.Select(genericType => genericType.Name));
-				
-				var typeName = param.ParameterType.Name.Replace($"`{genericArguments.Length}", "");
+                var genericArgumentsJoin = string.Join(", ", genericArguments.Select(genericType => genericType.Name));
 
-				sb.Append($"{typeName}<{genericArgumentsJoin}>");
-			}
-			else
-			{
-				sb.Append(param.ParameterType.Name.Replace("&", ""));
-			}
+                var typeName = param.ParameterType.Name.Replace($"`{genericArguments.Length}", "");
 
-			sb.Append(" ");
+                sb.Append($"{typeName}<{genericArgumentsJoin}>");
+            }
+            else
+            {
+                sb.Append(param.ParameterType.Name.Replace("&", ""));
+            }
 
-			sb.Append(param.Name);
+            sb.Append(" ");
 
-			if (param.HasDefaultValue)
-			{
-				sb.Append($" = {param.DefaultValue}");
-			}
+            sb.Append(param.Name);
 
-			return sb.ToString();
-		}
+            if (param.HasDefaultValue)
+            {
+                sb.Append($" = {param.DefaultValue}");
+            }
+
+            return sb.ToString();
+        }
     }
 }

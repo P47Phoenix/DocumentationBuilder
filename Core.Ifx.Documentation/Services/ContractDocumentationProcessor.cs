@@ -24,9 +24,9 @@ namespace Core.Ifx.Documentation.Services
             this.m_documentationWriter = documentationWriter;
         }
 
-        public void CreateDocumentation(XDocument assemblyDocumentation, string outputDirectory, List<Type> typesInNamespaces)
+        public void CreateDocumentation(string outputDirectory, List<Type> typesInNamespaces, XDocument assemblyDocumentation = null)
         {
-            List<ContractDescription> contractDescriptions = m_typePaser.Parse(assemblyDocumentation, typesInNamespaces);
+            List<ContractDescription> contractDescriptions = m_typePaser.Parse(typesInNamespaces, assemblyDocumentation);
 
             foreach (ContractDescription contractDescription in contractDescriptions)
             {

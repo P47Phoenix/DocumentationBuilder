@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using Core.Ifx.Documentation.Models;
@@ -19,11 +20,15 @@ namespace Core.Ifx.Documentation.Services
         {
             var assembly = Assembly.LoadFile(documentationOptions.AssemblyPath);
 
-            var assemblyDocumentation = XDocument.Load(documentationOptions.AssemblyDocumationPath);
-
+            XDocument assemblyDocumentation = null;
+            if (File.Exists(documentationOptions.AssemblyDocumationPath))
+            {
+                assemblyDocumentation = XDocument.Load(documentationOptions.AssemblyDocumationPath);
+            }
             var typesInAssembly = assembly.GetTypes().ToList();
 
-            m_documentationProcessor.CreateDocumentation(assemblyDocumentation, documentationOptions.OutputDirectory, typesInAssembly);
+            m_documentationProcessor.CreateDocumentation(documentationOptions.OutputDirectory,
+                typesInAssembly, assemblyDocumentation);
         }
 
     }

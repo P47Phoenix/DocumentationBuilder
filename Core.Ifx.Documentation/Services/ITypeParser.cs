@@ -7,6 +7,6 @@ namespace Core.Ifx.Documentation.Services
 {
     public interface ITypeParser<T>
     {
-        List<T> Parse(XDocument m_assemblyDocumentation, List<Type> typesInAssembly);
+        List<T> Parse(List<Type> typesInAssembly, XDocument m_assemblyDocumentation = null);
     }
 }
