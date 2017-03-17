@@ -1,6 +1,6 @@
 using System;
 
-namespace Core.Ifx.Documentation.Services
+namespace Core.Ifx.Documentation
 {
     public class TemplateMissingException : Exception
     {

@@ -20,15 +20,15 @@ namespace Core.Ifx.Documentation.Services
             this.m_ContractDocumentationProcesor = new ContractDocumentationProcessor(new ContractTypeParser(), new ContractDocumentationWriter());
         }
 
-        public void CreateDocumentation(XDocument assemblyDocumentation, string outputDirectory, List<Type> typesInNamespaces)
+        public void CreateDocumentation(string outputDirectory, List<Type> typesInNamespaces, XDocument assemblyDocumentation = null)
         {
-            List<ServiceDescription> contractDescriptions = m_TypeParser.Parse(assemblyDocumentation, typesInNamespaces);
+            List<ServiceDescription> contractDescriptions = m_TypeParser.Parse(typesInNamespaces, assemblyDocumentation);
 
             foreach (ServiceDescription contractDescription in contractDescriptions)
             {
                 m_DocumentationWriter.WriteDocumenation(contractDescription, outputDirectory);
 
-                m_ContractDocumentationProcesor.CreateDocumentation(assemblyDocumentation, outputDirectory, contractDescription.TypesServiceDependsOn);
+                m_ContractDocumentationProcesor.CreateDocumentation(outputDirectory, contractDescription.TypesServiceDependsOn, assemblyDocumentation);
             }
         }
     }

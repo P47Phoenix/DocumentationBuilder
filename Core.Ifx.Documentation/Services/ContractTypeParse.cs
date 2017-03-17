@@ -11,7 +11,7 @@ namespace Core.Ifx.Documentation.Services
 {
     public class ContractTypeParser : ITypeParser<ContractDescription>
     {
-        public List<ContractDescription> Parse(XDocument m_assemblyDocumentation, List<Type> typesInAssembly)
+        public List<ContractDescription> Parse(List<Type> typesInAssembly, XDocument m_assemblyDocumentation = null)
         {
             var contractDescriptions = new List<ContractDescription>();
 
@@ -19,7 +19,7 @@ namespace Core.Ifx.Documentation.Services
             {
                 string xPathQueryforContract = Helper.GetXPathQueryForType(typeInNamespace.FullName);
 
-                var documentationForContract = m_assemblyDocumentation.XPathSelectElement(xPathQueryforContract);
+                var documentationForContract = m_assemblyDocumentation?.XPathSelectElement(xPathQueryforContract);
 
                 string description = documentationForContract?.Value ?? string.Empty;
 
@@ -33,14 +33,14 @@ namespace Core.Ifx.Documentation.Services
 
                 foreach (var property in properties)
                 {
-                    var xpathQueryForProperty = Helper.GetXPathQueryForProperty(property.DeclaringType.FullName, property.Name);
+                    var xpathQueryForProperty = Helper.GetXPathQueryForProperty(property?.DeclaringType?.FullName, property?.Name);
 
-                    var documentationForProperty = m_assemblyDocumentation.XPathSelectElement(xpathQueryForProperty);
+                    var documentationForProperty = m_assemblyDocumentation?.XPathSelectElement(xpathQueryForProperty);
 
                     var contractProperty = new ContractProperty
                     {
-                        DataType = property.PropertyType,
-                        Name = property.Name,
+                        DataType = property?.PropertyType,
+                        Name = property?.Name,
                         Desription = documentationForProperty?.Value ?? string.Empty
                     };
 

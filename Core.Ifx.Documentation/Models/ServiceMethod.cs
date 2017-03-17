@@ -1,6 +1,4 @@
-using System.Xml.Linq;
-
-namespace Core.Ifx.Documentation.Services
+namespace Core.Ifx.Documentation.Models
 {
     public class ServiceMethod
     {
