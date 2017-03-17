@@ -8,18 +8,37 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Core.Ifx.Documentation.Models;
+using Core.Ifx.Documentation.Services.Formators;
+using Core.Ifx.Documentation.Services.Questions;
 
 namespace Core.Ifx.Documentation.Services
 {
     public class ServiceTypeParser : ITypeParser<ServiceDescription>
     {
+        private readonly List<IDocumentTypeAsServiceQuestion> m_documentTypeQuestions;
+        private readonly List<IDocumentMethodQuestion> m_documentMethodQuestions;
+        private readonly IMethodDependencyFinder m_methodDependencyfinder;
+        private readonly IFormatorFactory m_formatorFactory;
+
+        public ServiceTypeParser(
+            List<IDocumentTypeAsServiceQuestion> documentTypeQuestions,
+            List<IDocumentMethodQuestion> documentMethodQuestions,
+            IMethodDependencyFinder methodDependencyfinder,
+            IFormatorFactory formatorFactory)
+        {
+            m_documentTypeQuestions = documentTypeQuestions;
+            m_documentMethodQuestions = documentMethodQuestions;
+            m_methodDependencyfinder = methodDependencyfinder;
+            m_formatorFactory = formatorFactory;
+        }
+
         public List<ServiceDescription> Parse(List<Type> typesInAssembly, XDocument m_assemblyDocumentation = null)
         {
             var serviceDescriptions = new List<ServiceDescription>();
 
             foreach (var type in typesInAssembly)
             {
-                if (ShouldDocumentType(type))
+                if (m_documentTypeQuestions.Any(question => question.ShouldDocumentType(type)) == false)
                 {
                     continue;
                 }
@@ -36,198 +55,38 @@ namespace Core.Ifx.Documentation.Services
 
                 serviceDescriptions.Add(serviceDescription);
 
-                serviceDescription.TypesServiceDependsOn = new List<Type>();
-
                 foreach (var method in type.GetMethods())
                 {
-                    if (method.IsStatic || !method.IsPublic)
+
+                    if (m_documentMethodQuestions.Any(question => question.ShouldDocumentMethod(method)) == false)
                     {
                         continue;
                     }
+
+                    IFormatorRequest formatorRequest = new MethodFormatorRequest()
+                    {
+                        MethodInfo = method
+                    };
+
+                    IFormator formator = m_formatorFactory.CreateFormator(formatorRequest);
 
                     var xPathQueryForMethod = Helper.GetXPathQueryForMethod(type.FullName, method.Name);
 
                     var documentationForMethod = m_assemblyDocumentation?.XPathSelectElement(xPathQueryForMethod);
 
-                    serviceDescription.TypesServiceDependsOn.Add(method.ReturnType);
-
-                    var parameters = method.GetParameters();
-
-                    foreach (var parameter in parameters)
-                    {
-                        serviceDescription.TypesServiceDependsOn.Add(parameter.ParameterType);
-                    }
-
                     serviceDescription.ServiceMethods.Add(new ServiceMethod
                     {
                         Name = method.Name,
                         Description = documentationForMethod?.Value.Trim(' ', '\n'),
-                        Signature = GetMethodSignature(method)
+                        Signature = formator.Format(formatorRequest),  //GetMethodSignature(method)
                     });
 
-                    this.FindDependencies(serviceDescription, typesInAssembly);
+                    serviceDescription.TypesServiceDependsOn = m_methodDependencyfinder.FindDependencies(method, typesInAssembly).ToList();
                 }
-
-
             }
             return serviceDescriptions;
         }
 
-        private bool ShouldDocumentType(Type type)
-        {
-            if (type.BaseType == null)
-            {
-                return type.GetCustomAttribute<ServiceContractAttribute>() != null;
-            }
-
-            if (type.BaseType.Name.Equals("ApiController", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (type.BaseType.Name.Equals("Controller", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-            if (ShouldDocumentType(type.BaseType))
-            {
-                return true;
-            }
-            // if we have a ServiceContractAttribute return true else false
-            return type.GetCustomAttribute<ServiceContractAttribute>() != null;
-        }
-
-        private void FindDependencies(ServiceDescription serviceDescription, List<Type> typesInAssembly)
-        {
-            var newTypes = FindDependenciesRecursively(serviceDescription.TypesServiceDependsOn, typesInAssembly).Concat(serviceDescription.TypesServiceDependsOn);
-
-            serviceDescription.TypesServiceDependsOn = newTypes.Distinct().ToList();
-        }
-
-        private IEnumerable<Type> FindDependenciesRecursively(List<Type> serviceDescriptionTypesServiceDependsOn, List<Type> typesInAssembly)
-        {
-            foreach (var type in typesInAssembly)
-            {
-                foreach (var serviceDependantType in serviceDescriptionTypesServiceDependsOn)
-                {
-                    if (ShouldIncludeType(type, serviceDependantType))
-                    {
-                        yield return type;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="serviceDependantType"></param>
-        /// <returns>
-        /// 
-        /// </returns>
-        private bool ShouldIncludeType(Type type, Type serviceDependantType, int currentRecursion = 0)
-        {
-            if (currentRecursion++ > 100)
-            {
-                throw new Exception("Max recursion exceed the max of a hundred. Contact you architect for help.");
-            }
-            if (type.BaseType == serviceDependantType)
-            {
-                return true;
-            }
-
-            if (type.GetInterfaces().Contains(serviceDependantType))
-            {
-                return true;
-            }
-
-            var propTypes = serviceDependantType.GetProperties().Select(info => info.PropertyType).ToList();
-
-            foreach (var propType in propTypes)
-            {
-                if (propType.IsValueType)
-                {
-                    continue;
-                }
-
-                if (propType == type)
-                {
-                    return true;
-                }
-
-                if (ShouldIncludeType(type, propType, currentRecursion))
-                {
-                    return true;
-                }
-            }
-
-            if (serviceDependantType.IsGenericType)
-            {
-                var genericArgs = serviceDependantType.GetGenericArguments();
-
-                foreach (var genericArg in genericArgs)
-                {
-                    if (ShouldIncludeType(type, genericArg, currentRecursion))
-                    {
-                        return true;
-                    }
-                }
-
-            }
-
-            if (type.BaseType == null || type.BaseType == typeof(object))
-            {
-                return false;
-            }
-
-            return ShouldIncludeType(type.BaseType, serviceDependantType, currentRecursion);
-        }
-
-        private string GetMethodSignature(MethodInfo method)
-        {
-            var returnParamName = method.ReturnType.Name;
-
-            var paramaters = string.Join(", ", method.GetParameters().Select(GetParamNameValue));
-
-            return string.Format("{0} {1}({2})", returnParamName, method.Name, paramaters);
-        }
-
-        private static string GetParamNameValue(ParameterInfo param)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            if (param.IsOut)
-            {
-                sb.Append("out ");
-            }
-
-            if (param.ParameterType.IsGenericType)
-            {
-                var genericArguments = param.ParameterType.GetGenericArguments();
-
-                var genericArgumentsJoin = string.Join(", ", genericArguments.Select(genericType => genericType.Name));
-
-                var typeName = param.ParameterType.Name.Replace($"`{genericArguments.Length}", "");
-
-                sb.Append($"{typeName}<{genericArgumentsJoin}>");
-            }
-            else
-            {
-                sb.Append(param.ParameterType.Name.Replace("&", ""));
-            }
-
-            sb.Append(" ");
-
-            sb.Append(param.Name);
-
-            if (param.HasDefaultValue)
-            {
-                sb.Append($" = {param.DefaultValue}");
-            }
-
-            return sb.ToString();
-        }
+        
     }
 }

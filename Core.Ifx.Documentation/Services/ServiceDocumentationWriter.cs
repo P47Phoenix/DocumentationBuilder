@@ -15,6 +15,8 @@ namespace Core.Ifx.Documentation.Services
     {
         public void WriteDocumenation(ServiceDescription description, string m_outputDirectory)
         {
+            Directory.CreateDirectory(m_outputDirectory);
+
             var fileName = Path.ChangeExtension(description.Name, "doc");
 
             var documentFileName = Path.Combine(m_outputDirectory, fileName);

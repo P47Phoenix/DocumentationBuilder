@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Core.ProjectExtension.DocumentationBuilder</id>
-    <version>1.0.3-alpha</version>
+    <version>1.0.4-alpha</version>
     <title>Core.ProjectExtension.DocumentationBuilder</title>
     <authors>Michael Connelly</authors>
     <owners></owners>

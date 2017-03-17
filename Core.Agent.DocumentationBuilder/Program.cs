@@ -1,23 +1,19 @@
-﻿using Core.Ifx.Documentation.Services;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Core.Ifx.Documentation.Services;
 using Newtonsoft.Json;
 
 namespace Core.Agent.DocumentationBuilder
 {
     public class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             Program p = new Program();
 
             DocumentParserOptions options = p.ParseArgs(args);
 
-            p.Run(options);
+            return p.Run(options);
         }
 
         private DocumentParserOptions ParseArgs(string[] args)
@@ -26,18 +22,44 @@ namespace Core.Agent.DocumentationBuilder
 
             CommandLine.Parser.Default.ParseArguments(args, options);
 
-            Console.WriteLine($"Args: {JsonConvert.SerializeObject(options)}");
+            WriteValueConsole(options);
+            WriteValueDebug(options);
 
             return options;
         }
 
-        private void Run(DocumentParserOptions options)
+        [Conditional("DEBUG")]
+        private void WriteValueDebug(DocumentParserOptions options)
+        {
+            Debug.Write($"Args: {JsonConvert.SerializeObject(options, Formatting.Indented)}");
+        }
+
+        private static void WriteValueConsole(DocumentParserOptions options)
+        {
+            Console.WriteLine($"Args: {JsonConvert.SerializeObject(options, Formatting.Indented)}");
+        }
+
+        private int Run(DocumentParserOptions options)
         {
             var builder = new DocumentionBuilder();
 
-            builder.CreateDocumentation(options);
+            var success = builder.TryCreateDocumentation(options);
 
-            Process.Start(options.OutputDirectory);
+            if (success)
+            {
+                return 0;
+            }
+            else
+            {
+                if (Debugger.IsAttached)
+                {
+                    Console.WriteLine("Press enter to clode");
+                    Console.ReadLine();
+                }
+                
+                return 1;
+            }
+
         }
     }
 }

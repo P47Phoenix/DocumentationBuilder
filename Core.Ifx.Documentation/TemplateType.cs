@@ -1,4 +1,4 @@
-﻿namespace Core.Ifx.Documentation.Services
+﻿namespace Core.Ifx.Documentation
 {
     public enum TemplateType
     {

@@ -9,7 +9,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
-namespace Core.Ifx.Documentation.Services
+namespace Core.Ifx.Documentation
 {
     public class DocumentHelper
     {
